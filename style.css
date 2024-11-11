@@ -1,0 +1,42 @@
+/* Basic styling */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+.container {
+    text-align: center;
+}
+
+.coin {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    margin: 20px 0;
+    position: relative;
+}
+
+.heads, .tails {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    transition: transform 0.6s;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
