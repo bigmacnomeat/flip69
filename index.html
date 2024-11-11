@@ -4,11 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solana Coin Flip Game</title>
-    <link rel="icon" href="data:,"> <!-- Placeholder for favicon -->
+    <!-- Use the anchor library from a stable CDN -->
     <script type="module">
-  import * as anchor from 'https://cdn.jsdelivr.net/npm/@project-serum/anchor@0.23.0/dist/anchor.min.js';
-</script>
-
+        import * as anchor from 'https://cdn.jsdelivr.net/npm/@project-serum/anchor@0.18.0/dist/anchor.min.js';
+    </script>
+</head>
+<body>
+    <h1>Solana Coin Flip Game</h1>
+    <button id="connect-wallet-button">Connect Wallet</button>
+    <button id="flip-coin-button" style="display:none;">Flip Coin</button>
+    
+    <script>
         const { Connection, PublicKey, SystemProgram } = anchor.web3;
 
         // Solana Playground setup
@@ -74,10 +80,5 @@
             await flipCoin(betAmount, guess);
         });
     </script>
-</head>
-<body>
-    <h1>Solana Coin Flip Game</h1>
-    <button id="connect-wallet-button">Connect Wallet</button>
-    <button id="flip-coin-button" style="display:none;">Flip Coin</button>
 </body>
 </html>
