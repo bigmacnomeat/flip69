@@ -9,8 +9,8 @@
     <!-- Import Buffer polyfill -->
     <script src="https://cdn.jsdelivr.net/npm/buffer@6.0.3/index.min.js"></script>
     <script>
-        // Set up Buffer globally
-        window.Buffer = buffer.Buffer;
+        // Ensure Buffer is accessible
+        window.Buffer = window.buffer.Buffer;
     </script>
 </head>
 <body>
@@ -76,4 +76,3 @@
     </script>
 </body>
 </html>
-
