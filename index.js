@@ -65,4 +65,3 @@ document.getElementById("reset-button").addEventListener("click", () => {
     document.getElementById("status").textContent = "";
 });
 
-});
