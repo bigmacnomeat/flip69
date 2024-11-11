@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solana Coin Flip Game</title>
-    <script src="https://unpkg.com/@project-serum/anchor@0.22.0/dist/anchor.min.js"></script> <!-- Use version 0.22.0 -->
+    <!-- Import Solana Web3.js directly -->
+    <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.51.0/lib/index.iife.min.js"></script>
 </head>
 <body>
     <h1>Solana Coin Flip Game</h1>
@@ -12,36 +13,25 @@
     <button id="flip-coin-button" style="display:none;">Flip Coin</button>
     
     <script>
-        const { Connection, PublicKey, SystemProgram } = anchor.web3;
+        const { Connection, PublicKey, SystemProgram, Transaction, Keypair } = solanaWeb3;
 
-        // Solana Playground setup
-        const connection = new Connection(anchor.web3.clusterApiUrl('devnet'), 'confirmed');
-        const programID = new PublicKey("9t4VojyeFGiqKjM71LPPgaWKQ1ZDK94htYxoGSnviAyx");  // Replace with your Program ID from Playground
+        // Solana connection setup
+        const connection = new Connection(solanaWeb3.clusterApiUrl('devnet'), 'confirmed');
+        const programID = new PublicKey("9t4VojyeFGiqKjM71LPPgaWKQ1ZDK94htYxoGSnviAyx");  // Replace with your Program ID
 
-        let provider;
-        let program;
+        let playerPublicKey;
 
         async function connectWallet() {
-            if (window.solana) {
-                const { solana } = window;
+            if (window.solana && window.solana.isPhantom) {
                 try {
-                    await solana.connect();
-                    console.log('Wallet connected:', solana.publicKey.toString());
-                    provider = new anchor.AnchorProvider(connection, window.solana, { commitment: 'confirmed' });
-                    anchor.setProvider(provider);
+                    const response = await window.solana.connect();
+                    playerPublicKey = response.publicKey;
+                    console.log('Connected with public key:', playerPublicKey.toString());
 
-                    // Fetch the IDL from Solana Playground URL or the created IDL account address
-                    const idlAccount = new PublicKey("ETwVMfLAfyKLQAq8woWvoqeeqVF7gCmjWMi1nV9Ck9Va");
-                    const idlData = await connection.getAccountInfo(idlAccount);
-                    const idl = JSON.parse(idlData.data.toString());
-
-                    program = new anchor.Program(idl, programID);
-                    
                     // Show flip button after successful wallet connection
                     document.getElementById('flip-coin-button').style.display = 'block';
                 } catch (err) {
-                    console.error('Error connecting wallet:', err);
-                    alert('Failed to connect Phantom wallet');
+                    console.error('Wallet connection error:', err);
                 }
             } else {
                 alert('Please install Phantom Wallet');
@@ -49,22 +39,22 @@
         }
 
         async function flipCoin(betAmount, guess) {
-            if (!program || !provider) {
-                console.error('Program or provider is not initialized.');
+            if (!playerPublicKey) {
+                console.error('Wallet is not connected');
                 return;
             }
 
-            const player = provider.wallet.publicKey;
+            const transaction = new Transaction();
+            const instruction = SystemProgram.transfer({
+                fromPubkey: playerPublicKey,
+                toPubkey: programID, // replace with the correct receiving account if different
+                lamports: betAmount, // amount in lamports
+            });
+            transaction.add(instruction);
 
             try {
-                const tx = await program.rpc.flipCoin(new anchor.BN(betAmount), guess, {
-                    accounts: {
-                        player: player,
-                        flipCoin: programID,  // Ensure this is the correct flipCoin account
-                        systemProgram: SystemProgram.programId,
-                    },
-                });
-                console.log('Transaction successful:', tx);
+                const { signature } = await window.solana.signAndSendTransaction(transaction);
+                console.log('Transaction successful:', signature);
             } catch (err) {
                 console.error('Error flipping coin:', err);
             }
@@ -74,10 +64,9 @@
         document.getElementById('connect-wallet-button').addEventListener('click', connectWallet);
         document.getElementById('flip-coin-button').addEventListener('click', async () => {
             const betAmount = 1000000; // Example bet in lamports (1 SOL = 1e9 lamports)
-            const guess = 1; // 1 = tails, 0 = heads
+            const guess = 1; // Placeholder for guess (1 = tails, 0 = heads)
             await flipCoin(betAmount, guess);
         });
     </script>
 </body>
 </html>
-
