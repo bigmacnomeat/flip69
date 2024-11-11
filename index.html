@@ -6,6 +6,12 @@
     <title>Solana Coin Flip Game</title>
     <!-- Import Solana Web3.js directly -->
     <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.51.0/lib/index.iife.min.js"></script>
+    <!-- Import Buffer polyfill -->
+    <script src="https://cdn.jsdelivr.net/npm/buffer@6.0.3/index.min.js"></script>
+    <script>
+        // Set up Buffer globally
+        window.Buffer = buffer.Buffer;
+    </script>
 </head>
 <body>
     <h1>Solana Coin Flip Game</h1>
@@ -70,3 +76,4 @@
     </script>
 </body>
 </html>
+
