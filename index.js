@@ -64,4 +64,3 @@ document.getElementById("reset-button").addEventListener("click", () => {
     document.getElementById("tails-count").textContent = "Tails: 0";
     document.getElementById("status").textContent = "";
 });
-
