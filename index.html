@@ -2,77 +2,35 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solana Coin Flip Game</title>
-    <!-- Import Solana Web3.js directly -->
-    <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.51.0/lib/index.iife.min.js"></script>
-    <!-- Import Buffer polyfill -->
-    <script src="https://cdn.jsdelivr.net/npm/buffer@6.0.3/index.min.js"></script>
-    <script>
-        // Ensure Buffer is accessible
-        window.Buffer = window.buffer.Buffer;
-    </script>
+    <link rel="stylesheet" href="style.css">
+    <title>Coin Flip</title>
 </head>
 <body>
-    <h1>Solana Coin Flip Game</h1>
-    <button id="connect-wallet-button">Connect Wallet</button>
-    <button id="flip-coin-button" style="display:none;">Flip Coin</button>
-    
-    <script>
-        const { Connection, PublicKey, SystemProgram, Transaction, Keypair } = solanaWeb3;
+    <div class="container">
+        <div class="stats">
+            <p id="heads-count">Heads: 0</p>
+            <p id="tails-count">Tails: 0</p>
+        </div>
+        <div class="coin" id="coin">
+            <div class="heads">
+                <img src="./assets/heads.svg">
+            </div>
+            <div class="tails">
+                <img src="./assets/tails.svg">
+            </div>
+        </div>
+        <div class="buttons">
+            <button id="connect-wallet-button">Connect Wallet</button>
+            <button id="flip-button" style="display: none;">Flip the Coin</button>
+            <button id="reset-button" style="display: none;">Reset</button>
+        </div>
+        <p id="status"></p>
+    </div>
 
-        // Solana connection setup
-        const connection = new Connection(solanaWeb3.clusterApiUrl('devnet'), 'confirmed');
-        const programID = new PublicKey("9t4VojyeFGiqKjM71LPPgaWKQ1ZDK94htYxoGSnviAyx");  // Replace with your Program ID
-
-        let playerPublicKey;
-
-        async function connectWallet() {
-            if (window.solana && window.solana.isPhantom) {
-                try {
-                    const response = await window.solana.connect();
-                    playerPublicKey = response.publicKey;
-                    console.log('Connected with public key:', playerPublicKey.toString());
-
-                    // Show flip button after successful wallet connection
-                    document.getElementById('flip-coin-button').style.display = 'block';
-                } catch (err) {
-                    console.error('Wallet connection error:', err);
-                }
-            } else {
-                alert('Please install Phantom Wallet');
-            }
-        }
-
-        async function flipCoin(betAmount, guess) {
-            if (!playerPublicKey) {
-                console.error('Wallet is not connected');
-                return;
-            }
-
-            const transaction = new Transaction();
-            const instruction = SystemProgram.transfer({
-                fromPubkey: playerPublicKey,
-                toPubkey: programID, // replace with the correct receiving account if different
-                lamports: betAmount, // amount in lamports
-            });
-            transaction.add(instruction);
-
-            try {
-                const { signature } = await window.solana.signAndSendTransaction(transaction);
-                console.log('Transaction successful:', signature);
-            } catch (err) {
-                console.error('Error flipping coin:', err);
-            }
-        }
-
-        // Initialize event listeners
-        document.getElementById('connect-wallet-button').addEventListener('click', connectWallet);
-        document.getElementById('flip-coin-button').addEventListener('click', async () => {
-            const betAmount = 1000000; // Example bet in lamports (1 SOL = 1e9 lamports)
-            const guess = 1; // Placeholder for guess (1 = tails, 0 = heads)
-            await flipCoin(betAmount, guess);
-        });
-    </script>
+    <script src="index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.47.0/lib/index.iife.min.js"></script>
 </body>
 </html>
+
